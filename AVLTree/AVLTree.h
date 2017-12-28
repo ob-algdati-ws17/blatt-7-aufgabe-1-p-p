@@ -1,7 +1,3 @@
-//
-// Created by octav on 12/27/17.
-//
-
 #ifndef AVLTREE_AVLTREE_H
 #define AVLTREE_AVLTREE_H
 
@@ -10,7 +6,12 @@
 using namespace std;
 
 class AVLTree {
+
+private:
+
+
     struct Node {
+        int balance;
         const int key;
         Node* left = nullptr;
         Node* right = nullptr;
@@ -20,10 +21,27 @@ class AVLTree {
                 left(left),
                 right(right) { };
         ~Node();
-        vector<int>* preorder() const;  // (Hauptreihenfolge)
-        vector<int>* inorder() const;   // (Symmetrische Reihenfolge)
-        vector<int>* postorder() const; // (Nebenreihenfolge)
+        vector<int> *preorder() const;  // (Hauptreihenfolge)
+        vector<int> *inorder() const;   // (Symmetrische Reihenfolge)
+        vector<int> *postorder() const; // (Nebenreihenfolge)
     };
+
+    Node *root;
+
+public:
+
+
+    ~AVLTree();
+
+    bool search(const int val) const;
+
+    void insert(const int val);
+
+    void remove(const int val);
+
+    vector<int> *preorder() const;
+    vector<int> *inorder() const;
+    vector<int> *postorder() const;
 };
 
 
