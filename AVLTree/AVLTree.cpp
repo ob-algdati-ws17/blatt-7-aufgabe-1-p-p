@@ -5,6 +5,17 @@
 using namespace std;
 
 /*
+ * Node
+ */
+
+AVLTree::Node::Node(const int key) : key(key) {}
+
+AVLTree::Node::Node(const int key, Node *left, Node *right)
+        : key(key), left(left), right(right) {}
+
+AVLTree::Node::~Node() { delete left; delete right; }
+
+/*
  * Helper (private methods)
  */
 
@@ -31,16 +42,18 @@ AVLTree::Node* AVLTree::get_parent(const int cval) {
  * Implementation of class interface
  */
 
+AVLTree::~AVLTree() { delete root; }
+
 bool AVLTree::search(const int val) const {
-    auto vec = inorder();
+    auto n = root;
 
-    if (!vec) {
-        return false;
-    }
-
-    for (int &it : *vec) {
-        if (it == val) {
+    while (n) {
+        if (n->key == val) {
             return true;
+        } else if (val < n->key) {
+            n = n->left;
+        } else {
+            n = n->right;
         }
     }
 
