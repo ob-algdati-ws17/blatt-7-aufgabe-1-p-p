@@ -53,7 +53,7 @@ int main(int argc, const char *argv[]) {
                     case 'o':
                         vec = tree->postorder();
                         if (vec == nullptr)
-                            cout << "emoty tree" << endl;
+                            cout << "empty tree" << endl;
                         else
                             cout << *vec << endl;
                         break;
@@ -67,7 +67,7 @@ int main(int argc, const char *argv[]) {
                     case 'r':
                         vec = tree->preorder();
                         if (vec == nullptr)
-                            cout << "emoty tree" << endl;
+                            cout << "empty tree" << endl;
                         else
                             cout << *vec << endl;
                         break;
