@@ -20,7 +20,7 @@ AVLTree::Node::~Node() { delete left; delete right; }
  */
 
 AVLTree::Node* AVLTree::get_parent(const int cval) {
-    Node* p;
+    Node* p = nullptr;
     Node* tmp = root;
 
     while (tmp) {
@@ -38,6 +38,36 @@ AVLTree::Node* AVLTree::get_parent(const int cval) {
     return nullptr;
 }
 
+void AVLTree::rotate_left(Node *center) {
+    Node *a = center;
+    Node *b = center->right;
+
+    if (center == root) {
+        root = b;
+    } else {
+        Node *p = get_parent(center->key);
+        p->right = b;
+    }
+
+    a->right = b->left;
+    b->left = a;
+}
+
+void AVLTree::rotate_right(Node *center) {
+    Node *a = center;
+    Node *b = center->left;
+
+    if (center == root) {
+        root = b;
+    } else {
+        Node *p = get_parent(center->key);
+        p->left = b;
+    }
+
+    a->left = b->right;
+    b->right = a;
+}
+
 /*
  * Implementation of class interface
  */
@@ -45,28 +75,51 @@ AVLTree::Node* AVLTree::get_parent(const int cval) {
 AVLTree::~AVLTree() { delete root; }
 
 bool AVLTree::search(const int val) const {
-    auto n = root;
-
-    while (n) {
-        if (n->key == val) {
-            return true;
-        } else if (val < n->key) {
-            n = n->left;
-        } else {
-            n = n->right;
-        }
+    if (!root) {
+        return false;
     }
 
+    return root->search(val);
+}
+
+bool AVLTree::Node::search(const int val) {
+    if (val == key) return true;
+    if (val < key && left) return left->search(val);
+    if (val > key && right) return right->search(val);
     return false;
 }
 
-
 void AVLTree::insert(const int val) {
-    if (!root) {
-        root = new Node(val);
-    } else {
+    if (root) {
         insert_child(root, val);
+    } else {
+        root = new Node(val);
     }
+}
+
+void AVLTree::insert_child(Node *p, const int val) {
+    if (val == p->key) {
+        return;
+    }
+
+    if (val < p->key) {
+        if (p->left) {
+            insert_child(p->left, val);
+        } else {
+            p->left = new Node(val);
+            p->balance--;
+            upin(p);
+        }
+    } else {
+        if (p->right) {
+            insert_child(p->right, val);
+        } else {
+            p->right = new Node(val);
+            p->balance++;
+            upin(p);
+        }
+    }
+
 }
 
 void AVLTree::remove(const int val) {
@@ -77,30 +130,61 @@ void AVLTree::remove(const int val) {
  * Node
  */
 
-void AVLTree::insert_child(Node *p, const int val) {
-    if (val < p->key) {
-        p->balance--;
-        if (p->left) {
-            insert_child(p->left, val);
-        } else {
-            p->left = new Node(val);
-            return;
+void AVLTree::upin(Node *p) {
+    if (p == root) {
+        return;
+    }
+
+    Node *parent = get_parent(p->key);
+    if (p == parent->left) {
+        switch (parent->balance) {
+            case 1:
+                parent->balance = 0;
+                break;
+            case 0:
+                parent->balance = -1;
+                break;
+            case -1:
+                if (p->balance == 1) {
+                    parent->left = p->right;
+                    parent->left->left = p;
+                    p->right = nullptr;
+                    rotate_right(parent);
+                } else if (p->balance == -1){
+                    rotate_right(parent);
+                }
+                p->balance = 0;
+                parent->balance = 0;
+                return;
+            default:
+                throw std::logic_error("parent->balance should be in [-1,1]");
         }
-    } else if (val > p->key) {
-        p->balance++;
-        if (p->right) {
-            insert_child(p->right, val);
-        } else {
-            p->right = new Node(val);
-            return;
+    } else if (p == parent->right) {
+        switch (parent->balance) {
+            case -1:
+                parent->balance = 0;
+                break;
+            case 0:
+                parent->balance = 1;
+                break;
+            case 1:
+                if (p->balance == -1) {
+                    parent->right = p->left;
+                    parent->right->right = p;
+                    p->left = nullptr;
+                    rotate_left(parent);
+                } else if (p->balance == 1){
+                    rotate_left(parent);
+                }
+                p->balance = 0;
+                parent->balance = 0;
+                return;
+            default:
+                throw std::logic_error("parent->balance should be in [-1,1]");
         }
     }
 
-    if (p->balance == -2) {
-        // rotate right
-    } else if (p->balance == 2) {
-        // rotate left
-    }
+    upin(parent);
 }
 
 

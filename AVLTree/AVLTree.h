@@ -9,18 +9,38 @@ class AVLTree {
 
 private:
 
-
+    /**
+     * Representation of a Node in the tree, this can either
+     * be a 'full' node, a 'leaf' or a 'half-leaf'.
+     */
     struct Node {
         const int key;
         int balance = 0;
         Node* left = nullptr;
         Node* right = nullptr;
 
+        /**
+         * Constructs a new Node.
+         *
+         * @param key of the new Node
+         */
         Node(const int key);
 
+        /**
+         * Constructs a new Node.
+         *
+         * @param key of the new Node
+         * @param left child of the new Node
+         * @param right child of the new Node
+         */
         Node(const int key, Node *left, Node *right);
 
+        /**
+         * Frees the memory used by this node and that of all children.
+         */
         ~Node();
+
+        bool search(const int val);
 
         vector<int> *preorder() const;  // (Hauptreihenfolge)
 
@@ -29,6 +49,9 @@ private:
         vector<int> *postorder() const; // (Nebenreihenfolge)
     };
 
+    /**
+     * The root of the tree.
+     */
     Node *root;
 
     /**
@@ -41,17 +64,54 @@ private:
 
     /**
      * Inserts a new child with value into a (sub)tree.
+     *
      * @param parent the root of the (sub)tree to insert into
      * @param val the value to insert
      */
     void insert_child(Node *p, const int val);
 
+    /**
+     * Performs the 'left-rotation' on a given node to rebalance the tree.
+     *
+     * @param center the node to rotate
+     */
+    void rotate_left(Node *center);
+
+    /**
+     * Performs the 'right-rotation' on a given node to rebalance the tree.
+     *
+     * @param center the node to rotate
+     */
+    void rotate_right(Node *center);
+
+    /**
+     * Called after every insertion, recursively goes back from the point of insertion
+     * back to the root (or until a rotation happens) and checks if rebalancing is required.
+     *
+     * @param p the parent of the newly inserted node
+     */
+    void upin(Node *p);
+
 public:
 
+    /**
+     * Deconstructs the tree and all Nodes contained by the tree.
+     */
     ~AVLTree();
 
+    /**
+     * Searches a value in the tree, complexity is O(log n)
+     *
+     * @param val the value to search for
+     * @return true if the value was found, false if not
+     */
     bool search(const int val) const;
 
+    /**
+     * Inserts a value into the tree. Worst-case complexity is O(log n), best case is O(1) (empty tree).
+     *
+     * @param val the value to insert
+     */
     void insert(const int val);
 
     void remove(const int val);
