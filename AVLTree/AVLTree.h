@@ -40,7 +40,11 @@ private:
          */
         ~Node();
 
-        bool search(const int val);
+        bool search(const int val) const;
+
+        bool isLeaf() const;
+
+        int height() const;
 
         vector<int> *preorder() const;  // (Hauptreihenfolge)
 
@@ -92,6 +96,10 @@ private:
      */
     void upin(Node *p);
 
+    void upout(Node *p);
+
+    Node* find_sym_succ(Node* p) const;
+
 public:
 
     /**
@@ -114,7 +122,9 @@ public:
      */
     void insert(const int val);
 
-    void remove(const int val);
+    void remove(const int val) { };
+
+    bool is_empty() const;
 
     vector<int> *preorder() const;
 
