@@ -15,6 +15,17 @@ AVLTree::Node::Node(const int key, Node *left, Node *right)
 
 AVLTree::Node::~Node() { delete left; delete right; }
 
+bool AVLTree::Node::isLeaf() const {
+    return !left && !right;
+}
+
+int AVLTree::Node::height() const {
+    int l = 0, r = 0;
+    if (left) l = left->height() + 1;
+    if (right) r = right->height() + 1;
+    return l > r ? l : r;
+}
+
 /*
  * Helper (private methods)
  */
@@ -46,7 +57,11 @@ void AVLTree::rotate_left(Node *center) {
         root = b;
     } else {
         Node *p = get_parent(center->key);
-        p->right = b;
+        if (a == p->right) {
+            p->right = b;
+        } else {
+            p->left = b;
+        }
     }
 
     a->right = b->left;
@@ -61,7 +76,11 @@ void AVLTree::rotate_right(Node *center) {
         root = b;
     } else {
         Node *p = get_parent(center->key);
-        p->left = b;
+        if (a == p->left) {
+            p->left = b;
+        } else {
+            p->right = b;
+        }
     }
 
     a->left = b->right;
@@ -82,11 +101,15 @@ bool AVLTree::search(const int val) const {
     return root->search(val);
 }
 
-bool AVLTree::Node::search(const int val) {
+bool AVLTree::Node::search(const int val) const {
     if (val == key) return true;
     if (val < key && left) return left->search(val);
     if (val > key && right) return right->search(val);
     return false;
+}
+
+bool AVLTree::is_empty() const {
+    return root == nullptr;
 }
 
 void AVLTree::insert(const int val) {
@@ -119,11 +142,6 @@ void AVLTree::insert_child(Node *p, const int val) {
             upin(p);
         }
     }
-
-}
-
-void AVLTree::remove(const int val) {
-
 }
 
 /*
@@ -146,9 +164,7 @@ void AVLTree::upin(Node *p) {
                 break;
             case -1:
                 if (p->balance == 1) {
-                    parent->left = p->right;
-                    parent->left->left = p;
-                    p->right = nullptr;
+                    rotate_left(parent->left);
                     rotate_right(parent);
                 } else if (p->balance == -1){
                     rotate_right(parent);
@@ -157,7 +173,7 @@ void AVLTree::upin(Node *p) {
                 parent->balance = 0;
                 return;
             default:
-                throw std::logic_error("parent->balance should be in [-1,1]");
+                throw logic_error("parent->balance should be in [-1,1]");
         }
     } else if (p == parent->right) {
         switch (parent->balance) {
@@ -169,9 +185,7 @@ void AVLTree::upin(Node *p) {
                 break;
             case 1:
                 if (p->balance == -1) {
-                    parent->right = p->left;
-                    parent->right->right = p;
-                    p->left = nullptr;
+                    rotate_right(parent->right);
                     rotate_left(parent);
                 } else if (p->balance == 1){
                     rotate_left(parent);
@@ -180,13 +194,24 @@ void AVLTree::upin(Node *p) {
                 parent->balance = 0;
                 return;
             default:
-                throw std::logic_error("parent->balance should be in [-1,1]");
+                throw logic_error("parent->balance should be in [-1,1]");
         }
     }
 
     upin(parent);
 }
 
+AVLTree::Node * AVLTree::find_sym_succ(Node *p) const {
+    if (!p->right) {
+        return nullptr;
+    }
+
+    auto s = p->right;
+    while (s->left) {
+        s = s->left;
+    }
+    return s;
+}
 
 /*
  * Traversing
@@ -283,16 +308,16 @@ std::ostream &operator<<(std::ostream &os, const AVLTree &tree) {
                     os << "    " << value << " -> " << node->key
                        << " [label=\"" << l << "\"];" << endl;
 
-                    printToOs(os, node->key, node->left, "l");
-                    printToOs(os, node->key, node->right, "r");
+                    printToOs(os, node->key, node->left, to_string(node->balance));
+                    printToOs(os, node->key, node->right, to_string(node->balance));
                 }
             };
     os << "digraph tree {" << endl;
     if (tree.root == nullptr) {
         os << "    null " << "[shape=point];" << endl;
     } else {
-        printToOs(os, tree.root->key, tree.root->left, "l");
-        printToOs(os, tree.root->key, tree.root->right, "r");
+        printToOs(os, tree.root->key, tree.root->left, to_string(tree.root->balance));
+        printToOs(os, tree.root->key, tree.root->right, to_string(tree.root->balance));
     }
     os << "}" << endl;
     return os;
