@@ -166,11 +166,12 @@ void AVLTree::upin(Node *p) {
                 if (p->balance == 1) {
                     rotate_left(parent->left);
                     rotate_right(parent);
+                    parent->balance = 0;
                 } else if (p->balance == -1){
                     rotate_right(parent);
+                    parent->balance = 0;
                 }
                 p->balance = 0;
-                parent->balance = 0;
                 return;
             default:
                 throw logic_error("parent->balance should be in [-1,1]");
@@ -187,11 +188,12 @@ void AVLTree::upin(Node *p) {
                 if (p->balance == -1) {
                     rotate_right(parent->right);
                     rotate_left(parent);
+                    parent->balance = 0;
                 } else if (p->balance == 1){
                     rotate_left(parent);
+                    parent->balance = 0;
                 }
                 p->balance = 0;
-                parent->balance = 0;
                 return;
             default:
                 throw logic_error("parent->balance should be in [-1,1]");
