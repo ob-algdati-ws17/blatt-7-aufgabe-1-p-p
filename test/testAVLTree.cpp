@@ -1,14 +1,9 @@
 #include "testAVLTree.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
 
 using namespace std;
 
-bool isEqual(const vector<int> &v1, const vector<int> v2);
 AVLTree *insertNodes(AVLTree &tree, const vector<int> &nodes);
 bool searchNodes(const AVLTree &tree, const vector<int> &nodes);
-void treeToPng(AVLTree *tree);
 
 // Empty tree
 TEST(AVLTreeTest, Empty_Tree) {
@@ -52,7 +47,7 @@ TEST(AVLTreeTest, Root_With_Child_Right) {
     EXPECT_THAT(*tree->postorder(), testing::ElementsAre(3, 2));
 }
 
-TEST(AVLTreeTest, Root_With_two_Childs) {
+TEST(AVLTreeTest, Root_With_two_Children) {
     AVLTree *tree = new AVLTree();
     tree->insert(2);
     tree->insert(3);
@@ -184,7 +179,7 @@ TEST(AVLTreeTest, Remove_EmptyTree) {
     EXPECT_EQ(nullptr, tree->preorder());
 }
 
-TEST(AVLTreeTest, Remove_Root_Without_Childs) {
+TEST(AVLTreeTest, Remove_Root_Without_Children) {
     AVLTree *tree = new AVLTree();
     tree->insert(2);
     tree->remove(2);
@@ -214,7 +209,7 @@ TEST(AVLTreeTest, Remove_Root_With_Child_Right) {
     EXPECT_THAT(*tree->postorder(), testing::ElementsAre(3));
 }
 
-TEST(AVLTreeTest, Remove_Root_With_Two_Childs) {
+TEST(AVLTreeTest, Remove_Root_With_Two_Children) {
     AVLTree *tree = new AVLTree();
     insertNodes(*tree, {2, 3, 1});
     tree->remove(2);
@@ -307,7 +302,7 @@ TEST(AVLTreeTest, Remove_Inner_Node_With_One_Child_Right) {
     EXPECT_THAT(*tree->postorder(), testing::ElementsAre(3, 5, 4));
 }
 
-TEST(AVLTreeTest, Remove_Inner_Node_With_Two_Childs) {
+TEST(AVLTreeTest, Remove_Inner_Node_With_Two_Children) {
     AVLTree *tree = new AVLTree();
     insertNodes(*tree, {6, 4, 8, 2, 5});
     tree->remove(4);
@@ -315,16 +310,6 @@ TEST(AVLTreeTest, Remove_Inner_Node_With_Two_Childs) {
     EXPECT_THAT(*tree->preorder(), testing::ElementsAre(6, 5, 2, 8));
     EXPECT_THAT(*tree->inorder(), testing::ElementsAre(2, 5, 6, 8));
     EXPECT_THAT(*tree->postorder(), testing::ElementsAre(2, 5, 8, 6));
-}
-
-/*
- * Helper method, that compares element wise two vectors.
- * Gives true, if vectors are equal, false, if not.
-*/
-bool isEqual(const vector<int> &v1, const vector<int> v2) {
-    if (v1.size() != v2.size())
-        return false;
-    return equal(v1.begin(), v1.end(), v2.begin());
 }
 
 /*
@@ -347,11 +332,4 @@ bool searchNodes(const AVLTree &tree, const vector<int> &nodes) {
             return false;
     }
     return true;
-}
- void treeToPng (AVLTree *tree) {
-    ofstream myfile;
-    myfile.open("tree.dot");
-    myfile << *tree;
-    myfile.close();
-    system("dot -Tpng tree.dot -o tree.png");
 }
