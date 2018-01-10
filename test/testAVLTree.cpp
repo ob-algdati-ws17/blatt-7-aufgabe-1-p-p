@@ -279,11 +279,11 @@ TEST(AVLTreeTest, Remove_One_Leaf_Of_Two_Left) {
 TEST(AVLTreeTest, Remove_One_Leaf_Of_Two_Right) {
     AVLTree *tree = new AVLTree();
     insertNodes(*tree, {6, 4, 2, 8});
-    tree->remove(5);
-    EXPECT_FALSE(tree->search(5));
-    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(6, 4, 2, 8));
-    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(2, 4, 6, 8));
-    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(2, 4, 8, 6));
+    tree->remove(2);
+    EXPECT_FALSE(tree->search(2));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(6, 4, 8));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(4, 6, 8));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(4, 8, 6));
 }
 
 // Remove inner node without rotation
