@@ -100,6 +100,8 @@ private:
 
     Node* find_sym_succ(Node* p) const;
 
+    Node* find_sym_pre(Node* p) const;
+
 public:
 
     /**
@@ -122,7 +124,7 @@ public:
      */
     void insert(const int val);
 
-    void remove(const int val) { };
+    bool remove(const int val);
 
     bool is_empty() const;
 

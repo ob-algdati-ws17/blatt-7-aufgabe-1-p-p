@@ -20,7 +20,7 @@ bool AVLTree::Node::isLeaf() const {
 }
 
 int AVLTree::Node::height() const {
-    int l = 0, r = 0;
+    int l = 1, r = 1;
     if (left) l = left->height() + 1;
     if (right) r = right->height() + 1;
     return l > r ? l : r;
@@ -203,6 +203,215 @@ void AVLTree::upin(Node *p) {
     upin(parent);
 }
 
+bool AVLTree::remove(const int val) {
+    auto n = root;
+
+    // search for the node
+    while (n) {
+        if (val < n->key) {
+            n = n->left;
+        } else if (val > n->key) {
+            n = n->right;
+        } else {
+            break;
+        }
+    }
+
+    // if the node wasn't found, do nothing
+    if (!n || n->key != val) return false;
+
+    Node *parent = get_parent(n->key);
+
+    auto both_children_are_leafs = [&](){
+        if (!parent) {
+            root = nullptr;
+        } else if (n == parent->left) {
+            parent->left = nullptr;
+
+            auto q = parent->right;
+            if (!q) {
+                parent->balance = 0;
+                upout(parent);
+            } else if (q->height() == 1) {
+                parent->balance = 1;
+            } else if (q->height() == 2) {
+                switch (q->balance) {
+                    case -1:
+                        rotate_right(q);
+                        rotate_left(parent);
+                        upout(q);
+                        break;
+                    case 1:
+                        rotate_left(parent);
+                        upout(q);
+                        break;
+                    case 0:
+                        rotate_left(parent);
+                        break;
+                }
+            }
+        } else {
+            parent->right = nullptr;
+
+            auto q = parent->right;
+            if (!q) {
+                parent->balance = 0;
+                upout(parent);
+            } else if (q->height() == 1) {
+                parent->balance = -1;
+            } else if (q->height() == 2) {
+                switch (q->balance) {
+                    case 1:
+                        rotate_left(q);
+                        rotate_right(parent);
+                        upout(q);
+                        break;
+                    case -1:
+                        rotate_right(parent);
+                        upout(q);
+                        break;
+                    case 0:
+                        rotate_right(parent);
+                        break;
+                }
+            }
+        }
+    };
+
+    auto one_child_leaf_one_node = [&](){
+        if (n->left) {
+            if (!parent) {
+                root = n->left;
+                return true;
+            } else {
+                if (n == parent->left) {
+                    parent->left = n->left;
+                } else {
+                    parent->right = n->left;
+                }
+            }
+        } else {
+            if (!parent) {
+                root = n->right;
+                return true;
+            } else {
+                if (n == parent->left) {
+                    parent->left = n->right;
+                } else {
+                    parent->right = n->right;
+                }
+            }
+        }
+        upout(parent);
+    };
+
+    // Case 1: Both children are leafs
+    if (!n->left && !n->right) {
+        both_children_are_leafs();
+        return true;
+    }
+
+    // Case 2: One child is a leaf, one is a node
+    if (!n->left != !n->right) {
+        one_child_leaf_one_node();
+        return true;
+    }
+
+    // Both childs are inner nodes
+    auto sym_succ = find_sym_succ(n);
+    auto buf = get_parent(sym_succ->key);
+
+    if (!parent) {
+        if (root->right->height() > 1) {
+            root = new Node(sym_succ->key, root->left, root->right);
+        } else {
+            root = new Node(sym_succ->key, root->left, nullptr);
+        }
+    } else if (n == parent->left) {
+        parent->left = new Node(sym_succ->key, n->left, n->right);
+        buf = parent->left;
+    } else {
+        parent->right = new Node(sym_succ->key, n->left, n->right);
+        buf = parent->right;
+    }
+
+    n = sym_succ;
+    parent = buf;
+    if (!n->left && !n->right) {
+        both_children_are_leafs();
+    }
+
+    if (!n->left != !n->right) {
+        one_child_leaf_one_node();
+    }
+    upout(parent);
+}
+
+void AVLTree::upout(Node *p) {
+    if (p->balance != 0) return;
+    Node *parent = get_parent(p->key);
+
+    if (!parent) return;
+
+    if (p == parent->left) {
+        switch (parent->balance) {
+            case -1:
+                parent->balance = 0;
+                upout(parent);
+                break;
+            case 0:
+                parent->balance = 1;
+                break;
+            case 1:
+                auto q = parent->right;
+                switch (q->balance) {
+                    case 0:
+                        rotate_left(q);
+                        break;
+                    case 1:
+                        rotate_left(q);
+                        upout(q);
+                        break;
+                    case -1:
+                        auto r = parent->right->left;
+                        rotate_right(parent->right);
+                        rotate_left(parent);
+                        upout(r);
+                        break;
+                }
+                break;
+        }
+    } else {
+        switch (parent->balance) {
+            case 1:
+                parent->balance = 0;
+                upout(parent);
+                break;
+            case 0:
+                parent->balance = -1;
+                break;
+            case -1:
+                auto q = parent->left;
+                switch (q->balance) {
+                    case 0:
+                        rotate_right(q);
+                        break;
+                    case -1:
+                        rotate_right(parent);
+                        upout(q);
+                        break;
+                    case 1:
+                        auto l = parent->left->right;
+                        rotate_left(parent->left);
+                        rotate_right(parent);
+                        upout(l);
+                        break;
+                }
+                break;
+        }
+    }
+}
+
 AVLTree::Node * AVLTree::find_sym_succ(Node *p) const {
     if (!p->right) {
         return nullptr;
@@ -211,6 +420,18 @@ AVLTree::Node * AVLTree::find_sym_succ(Node *p) const {
     auto s = p->right;
     while (s->left) {
         s = s->left;
+    }
+    return s;
+}
+
+AVLTree::Node * AVLTree::find_sym_pre(Node *p) const {
+    if (p->left) {
+        return nullptr;
+    }
+
+    auto s = p->left;
+    while (s->right) {
+        s = s->right;
     }
     return s;
 }
