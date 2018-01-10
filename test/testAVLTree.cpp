@@ -175,6 +175,148 @@ TEST(AVLTreeTest, Rotate_Inner_Node_Right_Left_Six_Nodes) {
     EXPECT_THAT(*tree->postorder(), testing::ElementsAre(2, 4, 10, 12, 11, 8));
 }
 
+// Remove root without rotation
+TEST(AVLTreeTest, Remove_EmptyTree) {
+    AVLTree *tree = new AVLTree();
+    tree->remove(2);
+    EXPECT_EQ(nullptr, tree->inorder());
+    EXPECT_EQ(nullptr, tree->postorder());
+    EXPECT_EQ(nullptr, tree->preorder());
+}
+
+TEST(AVLTreeTest, Remove_Root_Without_Childs) {
+    AVLTree *tree = new AVLTree();
+    tree->insert(2);
+    tree->remove(2);
+    EXPECT_FALSE(searchNodes(*tree, {2}));
+    EXPECT_EQ(nullptr, tree->inorder());
+    EXPECT_EQ(nullptr, tree->postorder());
+    EXPECT_EQ(nullptr, tree->preorder());
+}
+
+TEST(AVLTreeTest, Remove_Root_With_Child_Left) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {2, 1});
+    tree->remove(2);
+    EXPECT_FALSE(searchNodes(*tree, {2}));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(1));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(1));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(1));
+}
+
+TEST(AVLTreeTest, Remove_Root_With_Child_Right) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {2, 3});
+    tree->remove(2);
+    EXPECT_FALSE(searchNodes(*tree, {2}));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(3));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(3));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(3));
+}
+
+TEST(AVLTreeTest, Remove_Root_With_Two_Childs) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {2, 3, 1});
+    tree->remove(2);
+    EXPECT_FALSE(searchNodes(*tree, {2}));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(3, 1));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(1, 3));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(1, 3));
+}
+
+// Remove root with rotation
+TEST(AVLTreeTest, Remove_Root_Rotate_Right) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {6, 4, 8, 2, 5, 7, 3});
+    tree->remove(6);
+    EXPECT_FALSE(searchNodes(*tree, {6}));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(4, 2, 3, 7, 5, 8));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(2, 3, 4, 5, 7, 8));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(3, 2, 5, 8, 7, 4));
+}
+
+TEST(AVLTreeTest, Remove_Root_Rotate_Left_Right) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {8, 4, 10, 2, 6, 9, 5});
+    tree->remove(8);
+    EXPECT_FALSE(searchNodes(*tree, {8}));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(6, 4, 2, 5, 9, 10));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(2, 4, 5, 6, 9, 10));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(2, 5, 4, 10, 9, 6));
+}
+
+// Remove leaf without rotation
+TEST(AVLTreeTest, Remove_One_Leaf_Left) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {4, 2, 5, 1});
+    tree->remove(1);
+    EXPECT_FALSE(tree->search(1));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(4, 2, 5));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(2, 4, 5));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(2, 5, 4));
+}
+
+TEST(AVLTreeTest, Remove_One_Leaf_Right) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {4, 2, 5, 3});
+    tree->remove(3);
+    EXPECT_FALSE(tree->search(3));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(4, 2, 5));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(2, 4, 5));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(2, 5, 4));
+}
+
+TEST(AVLTreeTest, Remove_One_Leaf_Of_Two_Left) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {6, 4, 8, 2, 5});
+    tree->remove(2);
+    EXPECT_FALSE(tree->search(2));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(6, 4, 5, 8));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(4, 5, 6, 8));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(5, 4, 8, 6));
+}
+
+TEST(AVLTreeTest, Remove_One_Leaf_Of_Two_Right) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {6, 4, 2, 8});
+    tree->remove(5);
+    EXPECT_FALSE(tree->search(5));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(6, 4, 2, 8));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(2, 4, 6, 8));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(2, 4, 8, 6));
+}
+
+// Remove inner node without rotation
+TEST(AVLTreeTest, Remove_Inner_Node_With_One_Child_Left) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {4, 3, 5, 2});
+    tree->remove(3);
+    EXPECT_FALSE(tree->search(3));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(4, 2, 5));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(2, 4, 5));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(2, 5, 4));
+}
+
+TEST(AVLTreeTest, Remove_Inner_Node_With_One_Child_Right) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {4, 2, 5, 3});
+    tree->remove(2);
+    EXPECT_FALSE(tree->search(2));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(4, 3, 5));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(3, 4, 5));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(3, 5, 4));
+}
+
+TEST(AVLTreeTest, Remove_Inner_Node_With_Two_Childs) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {6, 4, 8, 2, 5});
+    tree->remove(4);
+    EXPECT_FALSE(tree->search(4));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(6, 5, 2, 8));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(2, 5, 6, 8));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(2, 5, 8, 6));
+}
+
 /*
  * Helper method, that compares element wise two vectors.
  * Gives true, if vectors are equal, false, if not.
