@@ -4,10 +4,6 @@
 
 using namespace std;
 
-/*
- * Node
- */
-
 AVLTree::Node::Node(const int key) : key(key) {}
 
 AVLTree::Node::Node(const int key, Node *left, Node *right)
@@ -15,20 +11,12 @@ AVLTree::Node::Node(const int key, Node *left, Node *right)
 
 AVLTree::Node::~Node() { delete left; delete right; }
 
-bool AVLTree::Node::isLeaf() const {
-    return !left && !right;
-}
-
 int AVLTree::Node::height() const {
     int l = 1, r = 1;
     if (left) l = left->height() + 1;
     if (right) r = right->height() + 1;
     return l > r ? l : r;
 }
-
-/*
- * Helper (private methods)
- */
 
 AVLTree::Node* AVLTree::get_parent(const int cval) {
     Node* p = nullptr;
@@ -87,10 +75,6 @@ void AVLTree::rotate_right(Node *center) {
     b->right = a;
 }
 
-/*
- * Implementation of class interface
- */
-
 AVLTree::~AVLTree() { delete root; }
 
 bool AVLTree::search(const int val) const {
@@ -106,10 +90,6 @@ bool AVLTree::Node::search(const int val) const {
     if (val < key && left) return left->search(val);
     if (val > key && right) return right->search(val);
     return false;
-}
-
-bool AVLTree::is_empty() const {
-    return root == nullptr;
 }
 
 void AVLTree::insert(const int val) {
@@ -143,10 +123,6 @@ void AVLTree::insert_child(Node *p, const int val) {
         }
     }
 }
-
-/*
- * Node
- */
 
 void AVLTree::upin(Node *p) {
     if (p == root) {
@@ -206,7 +182,6 @@ void AVLTree::upin(Node *p) {
 bool AVLTree::remove(const int val) {
     auto n = root;
 
-    // search for the node
     while (n) {
         if (val < n->key) {
             n = n->left;
@@ -217,18 +192,17 @@ bool AVLTree::remove(const int val) {
         }
     }
 
-    // if the node wasn't found, do nothing
     if (!n || n->key != val) return false;
 
     Node *parent = get_parent(n->key);
 
-    auto both_children_are_leafs = [&](){
+    auto two_leafs = [&](){
         if (!parent) {
             root = nullptr;
         } else if (n == parent->left) {
             parent->left = nullptr;
-
             auto q = parent->right;
+
             if (!q) {
                 parent->balance = 0;
                 upout(parent);
@@ -248,12 +222,14 @@ bool AVLTree::remove(const int val) {
                     case 0:
                         rotate_left(parent);
                         break;
+                    default:
+                        throw logic_error("parent->balance should be in [-1,1]");
                 }
             }
         } else {
             parent->right = nullptr;
-
             auto q = parent->right;
+
             if (!q) {
                 parent->balance = 0;
                 upout(parent);
@@ -273,12 +249,14 @@ bool AVLTree::remove(const int val) {
                     case 0:
                         rotate_right(parent);
                         break;
+                    default:
+                        throw logic_error("parent->balance should be in [-1,1]");
                 }
             }
         }
     };
 
-    auto one_child_leaf_one_node = [&](){
+    auto one_leaf_one_node = [&](){
         if (n->left) {
             if (!parent) {
                 root = n->left;
@@ -305,46 +283,55 @@ bool AVLTree::remove(const int val) {
         upout(parent);
     };
 
-    // Case 1: Both children are leafs
-    if (!n->left && !n->right) {
-        both_children_are_leafs();
-        return true;
-    }
+    auto two_nodes = [&](){
+        auto sym = find_sym_succ(n);
+        auto sym_p = get_parent(sym->key);
 
-    // Case 2: One child is a leaf, one is a node
-    if (!n->left != !n->right) {
-        one_child_leaf_one_node();
-        return true;
-    }
-
-    // Both childs are inner nodes
-    auto sym_succ = find_sym_succ(n);
-    auto buf = get_parent(sym_succ->key);
-
-    if (!parent) {
-        if (root->right->height() > 1) {
-            root = new Node(sym_succ->key, root->left, root->right);
+        if (!parent) {
+            if (root->right->height() > 1) {
+                root = new Node(sym->key, root->left, root->right);
+            } else {
+                root = new Node(sym->key, root->left, nullptr);
+            }
+        } else if (n == parent->left) {
+            parent->left = new Node(sym->key, n->left, n->right);
+            sym_p = parent->left;
         } else {
-            root = new Node(sym_succ->key, root->left, nullptr);
+            parent->right = new Node(sym->key, n->left, n->right);
+            sym_p = parent->right;
         }
-    } else if (n == parent->left) {
-        parent->left = new Node(sym_succ->key, n->left, n->right);
-        buf = parent->left;
-    } else {
-        parent->right = new Node(sym_succ->key, n->left, n->right);
-        buf = parent->right;
-    }
 
-    n = sym_succ;
-    parent = buf;
+        // remove the symmetric successor
+        n = sym;
+        parent = sym_p;
+        if (!n->left && !n->right) {
+            two_leafs();
+        }
+
+        if (!n->left != !n->right) {
+            one_leaf_one_node();
+        }
+
+        upout(parent);
+    };
+
     if (!n->left && !n->right) {
-        both_children_are_leafs();
+        // Case 1: Both children are leafs
+        two_leafs();
+    } else if (!n->left != !n->right) {
+        // Case 2: One child is a leaf, one is a node
+        one_leaf_one_node();
+    } else {
+        // Case 3: Both childs are inner nodes
+        two_nodes();
     }
 
-    if (!n->left != !n->right) {
-        one_child_leaf_one_node();
-    }
-    upout(parent);
+    // Finally delete n
+    n->left = nullptr;
+    n->right = nullptr;
+    delete n;
+
+    return true;
 }
 
 void AVLTree::upout(Node *p) {
@@ -362,7 +349,7 @@ void AVLTree::upout(Node *p) {
             case 0:
                 parent->balance = 1;
                 break;
-            case 1:
+            case 1: {
                 auto q = parent->right;
                 switch (q->balance) {
                     case 0:
@@ -372,14 +359,20 @@ void AVLTree::upout(Node *p) {
                         rotate_left(q);
                         upout(q);
                         break;
-                    case -1:
+                    case -1: {
                         auto r = parent->right->left;
                         rotate_right(parent->right);
                         rotate_left(parent);
                         upout(r);
                         break;
+                    }
+                    default:
+                        throw logic_error("parent->balance should be in [-1,1]");
                 }
                 break;
+            }
+            default:
+                throw logic_error("parent->balance should be in [-1,1]");
         }
     } else {
         switch (parent->balance) {
@@ -390,7 +383,7 @@ void AVLTree::upout(Node *p) {
             case 0:
                 parent->balance = -1;
                 break;
-            case -1:
+            case -1: {
                 auto q = parent->left;
                 switch (q->balance) {
                     case 0:
@@ -400,14 +393,20 @@ void AVLTree::upout(Node *p) {
                         rotate_right(parent);
                         upout(q);
                         break;
-                    case 1:
+                    case 1: {
                         auto l = parent->left->right;
                         rotate_left(parent->left);
                         rotate_right(parent);
                         upout(l);
                         break;
+                    }
+                    default:
+                        throw logic_error("parent->balance should be in [-1,1]");
                 }
                 break;
+            }
+            default:
+                throw logic_error("parent->balance should be in [-1,1]");
         }
     }
 }
@@ -421,24 +420,9 @@ AVLTree::Node * AVLTree::find_sym_succ(Node *p) const {
     while (s->left) {
         s = s->left;
     }
+
     return s;
 }
-
-AVLTree::Node * AVLTree::find_sym_pre(Node *p) const {
-    if (p->left) {
-        return nullptr;
-    }
-
-    auto s = p->left;
-    while (s->right) {
-        s = s->right;
-    }
-    return s;
-}
-
-/*
- * Traversing
- */
 
 vector<int>* AVLTree::preorder() const {
     if (!root) {

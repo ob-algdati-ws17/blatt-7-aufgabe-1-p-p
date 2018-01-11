@@ -15,7 +15,7 @@ private:
      */
     struct Node {
         const int key;
-        int balance = 0;
+        short balance = 0;
         Node* left = nullptr;
         Node* right = nullptr;
 
@@ -41,8 +41,6 @@ private:
         ~Node();
 
         bool search(const int val) const;
-
-        bool isLeaf() const;
 
         int height() const;
 
@@ -96,11 +94,21 @@ private:
      */
     void upin(Node *p);
 
+    /**
+     * Called after removal, if needed. Ensures that the tree is rebalanced by doing
+     * appropriate rotations when necessary.
+     *
+     * @param p the parent of the removed node or the root of a subtree
+     */
     void upout(Node *p);
 
+    /**
+     * Retrieves the symmetric successor of a node.
+     *
+     * @param p the node whose symmetric successor is searched for
+     * @return the symmetric successor or nullptr if no such node exists
+     */
     Node* find_sym_succ(Node* p) const;
-
-    Node* find_sym_pre(Node* p) const;
 
 public:
 
@@ -124,9 +132,13 @@ public:
      */
     void insert(const int val);
 
+    /**
+     * Removes the node with val from the tree.
+     *
+     * @param val the val to remove
+     * @return true if a node was removed, false if not
+     */
     bool remove(const int val);
-
-    bool is_empty() const;
 
     vector<int> *preorder() const;
 
