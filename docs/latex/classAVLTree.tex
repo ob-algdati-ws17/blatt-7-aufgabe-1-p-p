@@ -1,0 +1,133 @@
+\hypertarget{classAVLTree}{}\section{A\+V\+L\+Tree Class Reference}
+\label{classAVLTree}\index{A\+V\+L\+Tree@{A\+V\+L\+Tree}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classAVLTree_af4a1d1be1b6301ba59c6e101c6efc6ba}{$\sim$\+A\+V\+L\+Tree}} ()
+\item 
+bool \mbox{\hyperlink{classAVLTree_af39c6e1bedbb1a685342d45c5e7b2263}{search}} (const int val) const
+\item 
+void \mbox{\hyperlink{classAVLTree_aae724d67fd69ce8dec164980d33e7c69}{insert}} (const int val)
+\item 
+bool \mbox{\hyperlink{classAVLTree_ae128228ecf5727ca598c884c20db0ddc}{remove}} (const int val)
+\item 
+vector$<$ int $>$ $\ast$ \mbox{\hyperlink{classAVLTree_a722bc2e2f36161ab95f477c4241034f9}{preorder}} () const
+\item 
+vector$<$ int $>$ $\ast$ \mbox{\hyperlink{classAVLTree_ac6cb3c9545647c06b037df91df935496}{inorder}} () const
+\item 
+vector$<$ int $>$ $\ast$ \mbox{\hyperlink{classAVLTree_a7d27a3906ddc72ccb8848bd6a310f24e}{postorder}} () const
+\end{DoxyCompactItemize}
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+ostream \& \mbox{\hyperlink{classAVLTree_a1c2fe2fa878a3a4e7c2315ac417b2721}{operator$<$$<$}} (ostream \&, const \mbox{\hyperlink{classAVLTree}{A\+V\+L\+Tree}} \&)
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classAVLTree_af4a1d1be1b6301ba59c6e101c6efc6ba}\label{classAVLTree_af4a1d1be1b6301ba59c6e101c6efc6ba}} 
+\index{A\+V\+L\+Tree@{A\+V\+L\+Tree}!````~A\+V\+L\+Tree@{$\sim$\+A\+V\+L\+Tree}}
+\index{````~A\+V\+L\+Tree@{$\sim$\+A\+V\+L\+Tree}!A\+V\+L\+Tree@{A\+V\+L\+Tree}}
+\subsubsection{\texorpdfstring{$\sim$\+A\+V\+L\+Tree()}{~AVLTree()}}
+{\footnotesize\ttfamily A\+V\+L\+Tree\+::$\sim$\+A\+V\+L\+Tree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Deconstructs the tree and all Nodes contained by the tree. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classAVLTree_ac6cb3c9545647c06b037df91df935496}\label{classAVLTree_ac6cb3c9545647c06b037df91df935496}} 
+\index{A\+V\+L\+Tree@{A\+V\+L\+Tree}!inorder@{inorder}}
+\index{inorder@{inorder}!A\+V\+L\+Tree@{A\+V\+L\+Tree}}
+\subsubsection{\texorpdfstring{inorder()}{inorder()}}
+{\footnotesize\ttfamily vector$<$int$>$$\ast$ A\+V\+L\+Tree\+::inorder (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Traverses the tree and returns the inorder.
+
+\begin{DoxyReturn}{Returns}
+the inorder of the tree 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classAVLTree_aae724d67fd69ce8dec164980d33e7c69}\label{classAVLTree_aae724d67fd69ce8dec164980d33e7c69}} 
+\index{A\+V\+L\+Tree@{A\+V\+L\+Tree}!insert@{insert}}
+\index{insert@{insert}!A\+V\+L\+Tree@{A\+V\+L\+Tree}}
+\subsubsection{\texorpdfstring{insert()}{insert()}}
+{\footnotesize\ttfamily void A\+V\+L\+Tree\+::insert (\begin{DoxyParamCaption}\item[{const int}]{val }\end{DoxyParamCaption})}
+
+Inserts a value into the tree. Worst-\/case complexity is O(log n), best case is O(1) (empty tree).
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & the value to insert \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classAVLTree_a7d27a3906ddc72ccb8848bd6a310f24e}\label{classAVLTree_a7d27a3906ddc72ccb8848bd6a310f24e}} 
+\index{A\+V\+L\+Tree@{A\+V\+L\+Tree}!postorder@{postorder}}
+\index{postorder@{postorder}!A\+V\+L\+Tree@{A\+V\+L\+Tree}}
+\subsubsection{\texorpdfstring{postorder()}{postorder()}}
+{\footnotesize\ttfamily vector$<$int$>$$\ast$ A\+V\+L\+Tree\+::postorder (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Traverses the tree and returns the postorder.
+
+\begin{DoxyReturn}{Returns}
+the postorder of the tree 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classAVLTree_a722bc2e2f36161ab95f477c4241034f9}\label{classAVLTree_a722bc2e2f36161ab95f477c4241034f9}} 
+\index{A\+V\+L\+Tree@{A\+V\+L\+Tree}!preorder@{preorder}}
+\index{preorder@{preorder}!A\+V\+L\+Tree@{A\+V\+L\+Tree}}
+\subsubsection{\texorpdfstring{preorder()}{preorder()}}
+{\footnotesize\ttfamily vector$<$int$>$$\ast$ A\+V\+L\+Tree\+::preorder (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Traverses the tree and returns the preorder.
+
+\begin{DoxyReturn}{Returns}
+the preorder of the tree 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classAVLTree_ae128228ecf5727ca598c884c20db0ddc}\label{classAVLTree_ae128228ecf5727ca598c884c20db0ddc}} 
+\index{A\+V\+L\+Tree@{A\+V\+L\+Tree}!remove@{remove}}
+\index{remove@{remove}!A\+V\+L\+Tree@{A\+V\+L\+Tree}}
+\subsubsection{\texorpdfstring{remove()}{remove()}}
+{\footnotesize\ttfamily bool A\+V\+L\+Tree\+::remove (\begin{DoxyParamCaption}\item[{const int}]{val }\end{DoxyParamCaption})}
+
+Removes the node with val from the tree.
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & the val to remove \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if a node was removed, false if not 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classAVLTree_af39c6e1bedbb1a685342d45c5e7b2263}\label{classAVLTree_af39c6e1bedbb1a685342d45c5e7b2263}} 
+\index{A\+V\+L\+Tree@{A\+V\+L\+Tree}!search@{search}}
+\index{search@{search}!A\+V\+L\+Tree@{A\+V\+L\+Tree}}
+\subsubsection{\texorpdfstring{search()}{search()}}
+{\footnotesize\ttfamily bool A\+V\+L\+Tree\+::search (\begin{DoxyParamCaption}\item[{const int}]{val }\end{DoxyParamCaption}) const}
+
+Searches a value in the tree, complexity is O(log n)
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & the value to search for \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the value was found, false if not 
+\end{DoxyReturn}
+
+
+\subsection{Friends And Related Function Documentation}
+\mbox{\Hypertarget{classAVLTree_a1c2fe2fa878a3a4e7c2315ac417b2721}\label{classAVLTree_a1c2fe2fa878a3a4e7c2315ac417b2721}} 
+\index{A\+V\+L\+Tree@{A\+V\+L\+Tree}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!A\+V\+L\+Tree@{A\+V\+L\+Tree}}
+\subsubsection{\texorpdfstring{operator$<$$<$}{operator<<}}
+{\footnotesize\ttfamily ostream\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{ostream \&}]{,  }\item[{const \mbox{\hyperlink{classAVLTree}{A\+V\+L\+Tree}} \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [friend]}}
+
+A real friend. \+:)
+
+\begin{DoxyReturn}{Returns}
+a friendly stream 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+A\+V\+L\+Tree/A\+V\+L\+Tree.\+h\end{DoxyCompactItemize}
