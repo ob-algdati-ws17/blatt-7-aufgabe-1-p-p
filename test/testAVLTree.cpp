@@ -1,9 +1,13 @@
 #include "testAVLTree.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
 AVLTree *insertNodes(AVLTree &tree, const vector<int> &nodes);
 bool searchNodes(const AVLTree &tree, const vector<int> &nodes);
+void treeToPng(AVLTree *tree);
 
 // Empty tree
 TEST(AVLTreeTest, Empty_Tree) {
@@ -343,6 +347,53 @@ TEST(AVLTreeTest, Remove_Inner_Node_With_Two_Children) {
     delete(tree);
 }
 
+// Remove inner node with rotation
+TEST(AVLTreeTest, Remove_Inner_Node_Rotate_Left_Right) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {8, 4, 10, 2, 6, 12, 5});
+    treeToPng(tree);
+    tree->remove(10);
+    treeToPng(tree);
+    EXPECT_FALSE(tree->search(10));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(6, 4, 2, 5, 8, 12));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(2, 4, 5, 6, 8, 12));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(2, 5, 4, 12, 8, 6));
+    delete(tree);
+}
+
+TEST(AVLTreeTest, Remove_Inner_Node_Rotate_Right) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {8, 4, 10, 2, 6, 12, 1});
+    tree->remove(10);
+    EXPECT_FALSE(tree->search(10));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(4, 2, 1, 8, 6, 12));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(1, 2, 4, 6, 8, 12));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(1, 2, 6, 12, 8, 4));
+    delete(tree);
+}
+
+TEST(AVLTreeTest, Remove_Inner_Node_Rotate_Right_Left) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {8, 6, 12, 4, 10, 14, 11});
+    tree->remove(6);
+    EXPECT_FALSE(tree->search(6));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(10, 8, 4, 12, 11, 14));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(4, 8, 10, 11, 12, 14));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(4, 8, 11, 14, 12, 10));
+    delete(tree);
+}
+
+TEST(AVLTreeTest, Remove_Inner_Node_Rotate_Left) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {8, 6, 12, 4, 10, 14, 15});
+    tree->remove(6);
+    EXPECT_FALSE(tree->search(6));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(12, 8, 4, 10, 14, 15));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(4, 8, 10, 12, 14, 15));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(4, 10, 8, 15, 14, 12));
+    delete(tree);
+}
+
 /*
  * Adds nodes from vector to a tree.
  * Returns this tree.
@@ -363,4 +414,12 @@ bool searchNodes(const AVLTree &tree, const vector<int> &nodes) {
             return false;
     }
     return true;
+}
+
+void treeToPng(AVLTree *tree) {
+    ofstream myfile;
+    myfile.open("tree.dot");
+    myfile << *tree;
+    myfile.close();
+    system("dot -Tpng tree.dot -o tree.png");
 }
