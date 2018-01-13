@@ -140,12 +140,32 @@ public:
      */
     bool remove(const int val);
 
+    /**
+     * Traverses the tree and returns the preorder.
+     *
+     * @return the preorder of the tree
+     */
     vector<int> *preorder() const;
 
+    /**
+     * Traverses the tree and returns the inorder.
+     *
+     * @return the inorder of the tree
+     */
     vector<int> *inorder() const;
 
+    /**
+     * Traverses the tree and returns the postorder.
+     *
+     * @return the postorder of the tree
+     */
     vector<int> *postorder() const;
 
+    /**
+     * A real friend. :)
+     *
+     * @return a friendly stream
+     */
     friend ostream &operator<<(ostream &, const AVLTree &);
 
 };
