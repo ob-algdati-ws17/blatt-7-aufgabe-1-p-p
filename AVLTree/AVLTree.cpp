@@ -125,6 +125,7 @@ void AVLTree::insert_child(Node *p, const int val) {
 }
 
 void AVLTree::upin(Node *p) {
+    if (p->balance == 0) return;
     if (p == root) {
         return;
     }
@@ -312,7 +313,21 @@ bool AVLTree::remove(const int val) {
         }
 
         if (!n->left != !n->right) {
-            one_leaf_one_node();
+            if (n == parent->left) {
+                if (n->left) {
+                    parent->left = n->left;
+                } else {
+                    parent->left = n->right;
+                }
+                parent->balance++;
+            } else {
+                if (n->left) {
+                    parent->right = n->left;
+                } else {
+                    parent->right = n->right;
+                }
+                parent->balance--;
+            }
         }
 
         upout(parent);
@@ -359,7 +374,7 @@ void AVLTree::upout(Node *p) {
                         rotate_left(q);
                         break;
                     case 1:
-                        rotate_left(q);
+                        rotate_left(parent);
                         upout(q);
                         break;
                     case -1: {
