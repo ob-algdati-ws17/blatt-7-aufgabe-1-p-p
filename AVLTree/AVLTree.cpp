@@ -228,7 +228,7 @@ bool AVLTree::remove(const int val) {
             }
         } else {
             parent->right = nullptr;
-            auto q = parent->right;
+            auto q = parent->left;
 
             if (!q) {
                 parent->balance = 0;
