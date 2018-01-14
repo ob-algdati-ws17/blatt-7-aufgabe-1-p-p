@@ -421,6 +421,17 @@ TEST(AVLTreeTest, Remove_Inner_Left_Node_With_Two_Children) {
     delete(tree);
 }
 
+TEST(AVLTreeTest, Remove_Sym_Successor_With_Child_Right) {
+    AVLTree *tree = new AVLTree();
+    insertNodes(*tree, {6, 3, 7, 2, 4, 8, 5});
+    tree->remove(3);
+    EXPECT_FALSE(tree->search(3));
+    EXPECT_THAT(*tree->preorder(), testing::ElementsAre(6, 4, 2, 5, 7, 8));
+    EXPECT_THAT(*tree->inorder(), testing::ElementsAre(2, 4, 5, 6, 7, 8));
+    EXPECT_THAT(*tree->postorder(), testing::ElementsAre(2, 5, 4, 8, 7, 6));
+    delete(tree);
+}
+
 TEST(AVLTreeTest, Remove_Inner_Right_Node_With_Two_Children) {
     AVLTree *tree = new AVLTree();
     insertNodes(*tree, {2, 1, 4, 3, 5});
