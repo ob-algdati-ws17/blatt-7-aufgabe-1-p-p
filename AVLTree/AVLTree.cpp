@@ -314,18 +314,10 @@ bool AVLTree::remove(const int val) {
 
         if (!n->left != !n->right) {
             if (n == parent->left) {
-                if (n->left) {
-                    parent->left = n->left;
-                } else {
-                    parent->left = n->right;
-                }
+                parent->left = n->right;
                 parent->balance++;
             } else {
-                if (n->left) {
-                    parent->right = n->left;
-                } else {
-                    parent->right = n->right;
-                }
+                parent->right = n->right;
                 parent->balance--;
             }
         }
