@@ -264,8 +264,10 @@ bool AVLTree::remove(const int val) {
             } else {
                 if (n == parent->left) {
                     parent->left = n->left;
+                    upout(parent->left);
                 } else {
                     parent->right = n->left;
+                    upout(parent->right);
                 }
             }
         } else {
@@ -275,12 +277,13 @@ bool AVLTree::remove(const int val) {
             } else {
                 if (n == parent->left) {
                     parent->left = n->right;
+                    upout(parent->left);
                 } else {
                     parent->right = n->right;
+                    upout(parent->right);
                 }
             }
         }
-        upout(parent);
     };
 
     auto two_nodes = [&](){
@@ -360,9 +363,12 @@ void AVLTree::upout(Node *p) {
                         upout(q);
                         break;
                     case -1: {
-                        auto r = parent->right->left;
-                        rotate_right(parent->right);
+                        auto r = q->left;
+                        rotate_right(q);
                         rotate_left(parent);
+                        parent->balance = -1;
+                        q->balance = 0;
+                        r->balance = 0;
                         upout(r);
                         break;
                     }
@@ -394,9 +400,12 @@ void AVLTree::upout(Node *p) {
                         upout(q);
                         break;
                     case 1: {
-                        auto l = parent->left->right;
-                        rotate_left(parent->left);
+                        auto l = q->right; // 7
+                        rotate_left(q);
                         rotate_right(parent);
+                        parent->balance = 1;
+                        q->balance = 0;
+                        l->balance = 0;
                         upout(l);
                         break;
                     }
